@@ -1,0 +1,25 @@
+name: Build
+on:
+    workflow_dispatch:
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7        
+            - uses: actions/sertup-node@v7       
+              with:
+                nodee-version: 24.18.0
+            - run: npm ci
+            - run: npm run build
+            - run: |
+                if [ ! -d sit ]; then
+                    echo "::error::le dissier dist/ n'existe pas"
+                    exit 1
+                fi
+            - run: npm run test
+            - uses: action/upload-artifact@v7
+              with:
+                name: build
+                path: dist/
+            - run: |     
+                echo "## Build">> "$GITHUB_STEP_SUMMARY"           
